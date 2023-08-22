@@ -1,24 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Объекты</h2>
-
-<table class="table table-striped table-sm">
-    <thead class="thead-dark">
+<table class="table table-light table-hover table-bordered table-sm table-responsive-md">
+    <thead>
         <tr>
-            {% for column in table_columns %}
+{% for column in table_columns %}
+{%  if column != 'id' %}
             <th scope="col">{{ column }}</th>
-            {% endfor %}
-        </tr>
+{%  endif %}
+{% endfor %}
+        <th></th>
+    </tr>
     </thead>
     <tbody>
 {% for row in rows %}
-    <tr>
+    <tr onclick="window.location='/admin/grp/{{ row.id }}'">
 {%  for column in table_columns %}
+{%   if column != 'id' %}
         <td>
-            <a href="/grp/{{ row.id }}">{{ row[column] }}</a>
+            {{ row[column] }}
         </td>
+{%   endif %}
 {%  endfor %}
+            <th>
+                <form action="/admin" method="post">
+                    <button type="submit" name="del_droup_id" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
+                </form>
+            </th>
     </tr>
 {% endfor %}
     </tbody>
@@ -27,15 +35,15 @@
 <form action="/admin" method="post">
     <div class="input-group input-group-sm mb-3">
         <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-sm">Name:</span>
+            <span class="input-group-text" id="inputGroup-sizing-sm">Название</span>
         </div>
         <input class="input-group-text" type="text" id="name" name="name" required>
         <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-sm">Desc:</span>
+            <span class="input-group-text" id="inputGroup-sizing-sm">Описание</span>
         </div>
-        <input class="input-group-text" type="text" id="desc" name="desc" required>
+        <input class="input-group-text" type="text" id="desc" name="desc">
     </div>
-    <button class="btn btn-primary" type="submit">Сохранить</button>
+    <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
 </form>
 
 {% endblock %}
