@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <table class="table table-light table-hover table-bordered table-sm table-responsive-md">
     <thead>
         <tr class="bg-primary">
@@ -32,7 +31,7 @@
 <b>Введите данные</b>
 <div class="row clearfix fixed-left">
     <div class="col-md-12 column">
-    <form action="/grp/{{ group_id }}/{{ currentdate }}" method="post" class="col-md-12">
+    <form action="/grp/{{ group_id }}/{{ global.currentdate }}" method="post" class="col-md-12">
         <table class="table table-bordered table-hover">
             <tbody>
 {% for column in table_columns %}

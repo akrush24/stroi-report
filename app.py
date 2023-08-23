@@ -51,6 +51,12 @@ class Entries(db.Model):
 with app.app_context():
     db.create_all()
 
+@app.context_processor
+def inject_global_vars():
+    return {'global': {
+                'title': "CMDB",
+                'currentdate': datetime.now().date()}}
+    
 # app name
 @app.errorhandler(404)
 
@@ -156,8 +162,7 @@ def group(group_id, filter_date):
                             groups = Groups.query.all(),
                             group_id = group_id,
                             entries = rows,
-                            tabs = tabs,
-                            currentdate = datetime.now().date())
+                            tabs = tabs)
 
 
 if __name__ == '__main__':
