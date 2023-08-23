@@ -7,7 +7,7 @@
         <tr class="bg-primary">
             <th>Название</th>
             <th>Значение</th>
-            <th>Дата занесения</th>
+            <th>Дата</th>
             <th></th>
         </tr>
     </thead>
@@ -16,7 +16,7 @@
         <tr>
             <td class="col-md-10">{{ row['name'] }}</td>
             <td class="col-md-1">{{ row['value'] }}{{ row['type'] }}</td>
-            <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d %H:%M') }}</td>
+            <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
             <td class="col-md-1">
                 <form action="/grp/{{ group_id }}" method="post">
                     <button type="submit" name="del_entrie" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
@@ -27,11 +27,12 @@
     </tbody>
 </table>
 
+<!-- Добавление новых данных -->
 {% if table_columns.count() > 0 %}
-<p class="font-weight-bold">Введите данные</p>
+<b>Введите данные</b>
 <div class="row clearfix fixed-left">
     <div class="col-md-12 column">
-    <form action="/grp/{{ group_id }}" method="post" class="col-md-12">
+    <form action="/grp/{{ group_id }}/{{ currentdate }}" method="post" class="col-md-12">
         <table class="table table-bordered table-hover">
             <tbody>
 {% for column in table_columns %}
@@ -51,7 +52,18 @@
     </form>
     </div>
 </div>
+{% else %}
+
+<b>У объекта нет доступных свойств</b>
 {% endif %}
 
-{% endblock %}
+<!-- Список дат -->
+<nav class="navbar">
+    <div>
+{% for tab in tabs %}
+        <a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ tab }}">{{ tab }}</a>
+{% endfor %}
+    </div>
+</nav>
 
+{% endblock %}

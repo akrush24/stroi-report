@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 from sqlalchemy.orm import relationship
-import jsonpickle
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
@@ -56,7 +56,7 @@ with app.app_context():
 
 # перехватываем 404 ошибку
 def not_found(e):
-    return render_template("404.html")
+    return render_template('404.html', groups=Groups.query.all())
 
 # Перенести все операции с базой данных внутрь функции или маршрута Flask
 @app.route('/')
@@ -118,8 +118,9 @@ def dynamic_route(group_id):
 '''
     заносим новые записи по выбранной группе
 '''
-@app.route('/grp/<int:group_id>', methods=['GET', 'POST'])
-def group(group_id):
+@app.route('/grp/<int:group_id>', defaults={'filter_date': None}, methods=['GET', 'POST'])
+@app.route('/grp/<int:group_id>/<string:filter_date>', methods=['GET', 'POST'])
+def group(group_id, filter_date):
     table_columns = Properties.query.filter_by(group_id = group_id)
 
     if request.method == 'POST':
@@ -138,15 +139,26 @@ def group(group_id):
 
     # rows = Entries.query.filter_by(group_id = group_id)
     rows = db.session.query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).filter(Entries.property_id == Properties.id).filter(Entries.group_id == group_id)
+    if filter_date:
+        rows = rows.filter(Entries.created_on.like(filter_date+'%'))
     entr_columns = Entries.__table__.columns.keys()
+    # select DATE(created_on) as DATE, count(*) from entries where group_id = 2 group by date
+    entries_by_date = db.session.query(
+        db.func.date(
+            Entries.created_on).label('DATE'),
+            db.func.count('*')).filter(Entries.group_id == group_id).group_by(db.func.date(Entries.created_on))
+    tabs = [row[0] for row in entries_by_date.all()]
+    
     return render_template(
-            'group.html',
-            data=rows,
-            table_columns=table_columns,
-            groups=Groups.query.all(),
-            group_id = group_id,
-            entr_columns = entr_columns,
-            entries = rows)
+                            'group.html',
+                            data = rows,
+                            table_columns = table_columns,
+                            groups = Groups.query.all(),
+                            group_id = group_id,
+                            entries = rows,
+                            tabs = tabs,
+                            currentdate = datetime.now().date())
+
 
 if __name__ == '__main__':
     app.run(debug=True)
