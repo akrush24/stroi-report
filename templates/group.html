@@ -1,52 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<table class="table table-hover table-responsive table-sm table-bordered">
+<table class="table table-hover table-sm">
     <thead>
-        <tr class="bg-primary">
-            <th>Date</th>
+        <tr>
+            <th  class="col-md-1"></th>
 {% for property in properties %}
-            <th>
+            <th class="table-secondary">
                 {{ property['name'] }}
             </th>
 {% endfor %}
         </tr>
     </thead>
     <tbody>
-{% for tab in tabs %}
+{% for row in valdict %}
     <tr>
-        <td>{{ tab }}</td>
-{% for entrie in entries %}
-        <td>{{ entrie['value'] }}</td>
-{% endfor %}
+        <th class="table-secondary"><a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ row }}">{{ row }}</a></th> <!-- столбец с датой -->
+{%  for property in properties %}
+{%   if valdict[row][property.id] %}
+        <td>{{ valdict[row][property.id] }}</td>
+{%   else %}
+        <td>0</td>
+{%   endif %}
+{%  endfor %}
     </tr>
 {% endfor %}
-    </tbody>
-</table>
-
-<!-- table-bordered -->
-<table class="table table-hover table-responsive table-sm">
-    <thead>
-        <tr class="bg-primary table-secondary">
-            <th>Название</th>
-            <th>Значение</th>
-            <th>Дата</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-{% for row in entries %}
-        <tr>
-            <td class="col-md-9">{{ row['name'] }}</td>
-            <td class="col-md-1">{{ row['value'] }}{{ row['type'] }}</td>
-            <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
-            <td class="col-md-1">
-                <form action="/grp/{{ group_id }}" method="post">
-                    <button type="submit" name="del_entrie" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
-                </form>
-            </td>
-        </tr>
+    <tr>
+        <th class="table-secondary">
+            Сумма
+        </th>
+{% for property in properties %}
+        <td>0</td>
 {% endfor %}
+    </tr>
     </tbody>
 </table>
 
@@ -79,14 +65,5 @@
 
 <b>У объекта нет доступных свойств</b>
 {% endif %}
-
-<!-- Список дат -->
-<nav class="navbar">
-    <div>
-{% for tab in tabs %}
-        <a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ tab }}">{{ tab }}</a>
-{% endfor %}
-    </div>
-</nav>
 
 {% endblock %}

@@ -64,15 +64,18 @@ def inject_global_vars():
 def not_found(e):
     return render_template('404.html', groups=Groups.query.all())
 
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'images'),
-        'icons8-calendar-cloud-32.png', mimetype='image/vnd.microsoft.icon')
+        'favicon.png', mimetype='image/vnd.microsoft.icon')
+
 
 # Перенести все операции с базой данных внутрь функции или маршрута Flask
 @app.route('/')
 def index():
     return render_template('base.html', groups=Groups.query.all())
+
 
 '''
     Админка
@@ -98,6 +101,9 @@ def admin():
                             groups=rows)
 
 
+'''
+    Редактирование групп и свойств
+'''
 @app.route('/admin/grp/<int:group_id>', methods=['GET', 'POST'])
 def dynamic_route(group_id):
     if request.method == 'POST':
@@ -129,9 +135,63 @@ def dynamic_route(group_id):
 '''
     заносим новые записи по выбранной группе
 '''
-@app.route('/grp/<int:group_id>', defaults={'filter_date': None}, methods=['GET', 'POST'])
+@app.route('/grp/<int:group_id>', methods=['GET', 'POST'])
+# @app.route('/grp/<int:group_id>', defaults={'filter_date': None}, methods=['GET', 'POST'])
+#@app.route('/grp/<int:group_id>/<string:filter_date>', methods=['GET', 'POST'])
+def group(group_id):
+    table_columns = Properties.query.filter_by(group_id = group_id)
+
+    if request.method == 'POST':
+        post_values = list(request.form.keys())
+        if 'del_entrie' in post_values:
+            Entries.query.filter_by(id = request.form['del_entrie']).delete()
+            db.session.commit()
+        else:
+            for post_value in post_values:
+                # return(request.form[port_value] + '<br>')
+                newline = Entries(group_id = group_id,
+                                property_id = post_value,
+                                value = request.form[post_value])
+                db.session.add(newline)
+                db.session.commit()
+
+    # rows = Entries.query.filter_by(group_id = group_id)
+    rows = db.session.query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).filter(Entries.property_id == Properties.id).filter(Entries.group_id == group_id)
+    # entr_columns = Entries.__table__.columns.keys()
+    # select DATE(created_on) as DATE, count(*) from entries where group_id = 2 group by date
+    entries_by_date = db.session.query(
+        db.func.date(
+            Entries.created_on).label('DATE'),
+            db.func.count('*')).filter(Entries.group_id == group_id).group_by(db.func.date(Entries.created_on))
+    tabs = [row[0] for row in entries_by_date.all()]
+    properties_by_group = Properties.query.filter(Properties.group_id == group_id).all()
+    daterow = {}
+    # цикл по всем датам на которых есть записи
+    for date in tabs:
+        # цикл по всем записям по выбранной дате
+        #for e in db.session.query(Entries.value, Entries.created_on, Entries.property_id).filter(Entries.created_on.like(date+'%')).filter(Entries.group_id == group_id):
+        all_day_properties = {}
+        for propetry in properties_by_group:
+            # цикл по всем свойствам на которым есть записи на конкретную дату
+            entries_by_date_by_property = db.session.query(Entries.value).filter(Entries.created_on.like(date+'%')).filter(Entries.group_id == group_id).filter(Entries.property_id == propetry.id)
+            for v in entries_by_date_by_property:
+                all_day_properties[propetry.id] = v.value
+        daterow[str(date)] = all_day_properties
+
+    return render_template(
+            'group.html',
+            data = rows,
+            table_columns = table_columns,
+            groups = Groups.query.all(),
+            properties = properties_by_group,
+            group_id = group_id,
+            entries = rows,
+            tabs = tabs,
+            valdict = daterow)
+
+
 @app.route('/grp/<int:group_id>/<string:filter_date>', methods=['GET', 'POST'])
-def group(group_id, filter_date):
+def dateview(group_id, filter_date):
     table_columns = Properties.query.filter_by(group_id = group_id)
 
     if request.method == 'POST':
@@ -159,19 +219,31 @@ def group(group_id, filter_date):
             Entries.created_on).label('DATE'),
             db.func.count('*')).filter(Entries.group_id == group_id).group_by(db.func.date(Entries.created_on))
     tabs = [row[0] for row in entries_by_date.all()]
-    for p in Properties.query.filter(Entries.group_id == group_id).all():
-        print('Property: '+p.name)
-        for e in Entries.query.filter(Properties.id == p.id).filter(Entries.group_id == group_id):
-            print(e.value)
+    properties_by_group = Properties.query.filter(Properties.group_id == group_id).all()
+    daterow = {}
+    # цикл по всем датам на которых есть записи
+    for date in tabs:
+        # цикл по всем записям по выбранной дате
+        #for e in db.session.query(Entries.value, Entries.created_on, Entries.property_id).filter(Entries.created_on.like(date+'%')).filter(Entries.group_id == group_id):
+        all_day_properties = {}
+        for propetry in properties_by_group:
+            # цикл по всем свойствам на которым есть записи на конкретную дату
+            entries_by_date_by_property = db.session.query(Entries.value).filter(Entries.created_on.like(date+'%')).filter(Entries.group_id == group_id).filter(Entries.property_id == propetry.id)
+            for v in entries_by_date_by_property:
+                all_day_properties[propetry.id] = v.value
+        daterow[str(date)] = all_day_properties
+
     return render_template(
-            'group.html',
+            'dateview.html',
             data = rows,
             table_columns = table_columns,
             groups = Groups.query.all(),
-            properties = Properties.query.filter(Entries.group_id == group_id).all(),
+            properties = properties_by_group,
             group_id = group_id,
             entries = rows,
-            tabs = tabs)
+            tabs = tabs,
+            valdict = daterow,
+            filter_date = filter_date)
 
 
 if __name__ == '__main__':

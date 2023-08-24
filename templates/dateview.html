@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<table class="table table-hover table-responsive table-sm">
+    <thead>
+        <tr class="bg-primary table-secondary">
+            <th>Название</th>
+            <th>Значение</th>
+            <th>Дата</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+{% for row in entries %}
+        <tr>
+            <td class="col-md-9">{{ row['name'] }}</td>
+            <td class="col-md-1">{{ row['value'] }}{{ row['type'] }}</td>
+            <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
+            <td class="col-md-1">
+{%  if filter_date %}
+                <form action="/grp/{{ group_id }}/{{ filter_date }}" method="post">
+{%  else %}
+                <form action="/grp/{{ group_id }}" method="post">
+{%  endif %}
+                    <button type="submit" name="del_entrie" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
+                </form>
+            </td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+<!-- Список дат -->
+<nav class="navbar">
+    <div>
+{% for tab in tabs %}
+        <a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ tab }}">{{ tab }}</a>
+{% endfor %}
+    </div>
+</nav>
+
+{% endblock %}
