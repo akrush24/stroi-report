@@ -6,7 +6,7 @@
         <tr>
             <th  class="col-md-1"></th>
 {% for property in properties %}
-            <th class="table-secondary" style="white-space:nowrap;">
+            <th style="white-space:nowrap;">
                 {{ property['name'] }}
             </th>
 {% endfor %}
@@ -14,8 +14,8 @@
     </thead>
     <tbody>
 {% for row in valdict %}
-    <tr>
-        <th class="table-secondary"><a style="white-space:nowrap;" class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ row }}">{{ row }}</a></th> <!-- столбец с датой -->
+    <tr onclick="window.location='/grp/{{ group_id }}/{{ row }}'">
+        <th>{{ row }}</th> <!-- столбец с датой -->
 {%  for property in properties %}
 {%   if valdict[row][property.id] %}
         <td>{{ valdict[row][property.id] }}</td>
@@ -26,7 +26,7 @@
     </tr>
 {% endfor %}
     <tr>
-        <th class="table-secondary">
+        <th>
             Сумма
         </th>
 {% for property in properties %}
