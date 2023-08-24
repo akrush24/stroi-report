@@ -1,9 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<table class="table table-light table-hover table-bordered table-sm table-responsive-md">
+<table class="table table-hover table-responsive table-sm table-bordered">
     <thead>
         <tr class="bg-primary">
+            <th>Date</th>
+{% for property in properties %}
+            <th>
+                {{ property['name'] }}
+            </th>
+{% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+{% for tab in tabs %}
+    <tr>
+        <td>{{ tab }}</td>
+{% for entrie in entries %}
+        <td>{{ entrie['value'] }}</td>
+{% endfor %}
+    </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+<!-- table-bordered -->
+<table class="table table-hover table-responsive table-sm">
+    <thead>
+        <tr class="bg-primary table-secondary">
             <th>Название</th>
             <th>Значение</th>
             <th>Дата</th>
@@ -13,7 +37,7 @@
     <tbody>
 {% for row in entries %}
         <tr>
-            <td class="col-md-10">{{ row['name'] }}</td>
+            <td class="col-md-9">{{ row['name'] }}</td>
             <td class="col-md-1">{{ row['value'] }}{{ row['type'] }}</td>
             <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
             <td class="col-md-1">
@@ -28,7 +52,7 @@
 
 <!-- Добавление новых данных -->
 {% if table_columns.count() > 0 %}
-<b>Введите данные</b>
+<p class="text-success">Введите данные</p>
 <div class="row clearfix fixed-left">
     <div class="col-md-12 column">
     <form action="/grp/{{ group_id }}/{{ global.currentdate }}" method="post" class="col-md-12">

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
 import uuid
 from sqlalchemy.orm import relationship
-
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
@@ -63,6 +63,11 @@ def inject_global_vars():
 # перехватываем 404 ошибку
 def not_found(e):
     return render_template('404.html', groups=Groups.query.all())
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'images'),
+        'icons8-calendar-cloud-32.png', mimetype='image/vnd.microsoft.icon')
 
 # Перенести все операции с базой данных внутрь функции или маршрута Flask
 @app.route('/')
@@ -147,22 +152,26 @@ def group(group_id, filter_date):
     rows = db.session.query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).filter(Entries.property_id == Properties.id).filter(Entries.group_id == group_id)
     if filter_date:
         rows = rows.filter(Entries.created_on.like(filter_date+'%'))
-    entr_columns = Entries.__table__.columns.keys()
+    # entr_columns = Entries.__table__.columns.keys()
     # select DATE(created_on) as DATE, count(*) from entries where group_id = 2 group by date
     entries_by_date = db.session.query(
         db.func.date(
             Entries.created_on).label('DATE'),
             db.func.count('*')).filter(Entries.group_id == group_id).group_by(db.func.date(Entries.created_on))
     tabs = [row[0] for row in entries_by_date.all()]
-    
+    for p in Properties.query.filter(Entries.group_id == group_id).all():
+        print('Property: '+p.name)
+        for e in Entries.query.filter(Properties.id == p.id).filter(Entries.group_id == group_id):
+            print(e.value)
     return render_template(
-                            'group.html',
-                            data = rows,
-                            table_columns = table_columns,
-                            groups = Groups.query.all(),
-                            group_id = group_id,
-                            entries = rows,
-                            tabs = tabs)
+            'group.html',
+            data = rows,
+            table_columns = table_columns,
+            groups = Groups.query.all(),
+            properties = Properties.query.filter(Entries.group_id == group_id).all(),
+            group_id = group_id,
+            entries = rows,
+            tabs = tabs)
 
 
 if __name__ == '__main__':
