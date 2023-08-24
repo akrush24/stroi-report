@@ -141,20 +141,6 @@ def dynamic_route(group_id):
 def group(group_id):
     table_columns = Properties.query.filter_by(group_id = group_id)
 
-    if request.method == 'POST':
-        post_values = list(request.form.keys())
-        if 'del_entrie' in post_values:
-            Entries.query.filter_by(id = request.form['del_entrie']).delete()
-            db.session.commit()
-        else:
-            for post_value in post_values:
-                # return(request.form[port_value] + '<br>')
-                newline = Entries(group_id = group_id,
-                                property_id = post_value,
-                                value = request.form[post_value])
-                db.session.add(newline)
-                db.session.commit()
-
     # rows = Entries.query.filter_by(group_id = group_id)
     rows = db.session.query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).filter(Entries.property_id == Properties.id).filter(Entries.group_id == group_id)
     # entr_columns = Entries.__table__.columns.keys()
@@ -201,12 +187,22 @@ def dateview(group_id, filter_date):
             db.session.commit()
         else:
             for post_value in post_values:
-                # return(request.form[port_value] + '<br>')
-                newline = Entries(group_id = group_id,
+                # проверяем если строчка с такой датой уже есть то игнорирует добавление новой и делаем update
+                rows = Entries.query.\
+                    filter(Entries.group_id == group_id).\
+                    filter(Entries.property_id == post_value).\
+                    filter(Entries.created_on.like(filter_date + '%'))
+                if rows.count() == 0:
+                    newline = Entries(group_id = group_id,
                                 property_id = post_value,
                                 value = request.form[post_value])
-                db.session.add(newline)
+                    db.session.add(newline)
+                else:
+                    print('UPDATE')
+                    print(rows.value)
+                    rows.update(dict(value = request.form[post_value]))
                 db.session.commit()
+
 
     # rows = Entries.query.filter_by(group_id = group_id)
     rows = db.session.query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).filter(Entries.property_id == Properties.id).filter(Entries.group_id == group_id)
