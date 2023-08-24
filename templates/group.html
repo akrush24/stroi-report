@@ -6,7 +6,7 @@
         <tr>
             <th  class="col-md-1"></th>
 {% for property in properties %}
-            <th class="table-secondary">
+            <th class="table-secondary" style="white-space:nowrap;">
                 {{ property['name'] }}
             </th>
 {% endfor %}
@@ -15,7 +15,7 @@
     <tbody>
 {% for row in valdict %}
     <tr>
-        <th class="table-secondary"><a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ row }}">{{ row }}</a></th> <!-- столбец с датой -->
+        <th class="table-secondary"><a style="white-space:nowrap;" class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ row }}">{{ row }}</a></th> <!-- столбец с датой -->
 {%  for property in properties %}
 {%   if valdict[row][property.id] %}
         <td>{{ valdict[row][property.id] }}</td>
@@ -41,7 +41,7 @@
 <p class="text-success">Введите данные</p>
 <div class="row clearfix fixed-left">
     <div class="col-md-12 column">
-    <form action="/grp/{{ group_id }}/{{ global.currentdate }}" method="post" class="col-md-12">
+    <form action="/grp/{{ group_id }}" method="post" class="col-md-12">
         <table class="table table-bordered table-hover">
             <tbody>
 {% for column in table_columns %}
