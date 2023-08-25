@@ -208,7 +208,7 @@ def group(group_id):
                 date+'%')).filter(Entries.group_id == group_id).filter(Entries.property_id == property.id)
             for v in entries_by_date_by_property:
                 all_day_properties[property.id] = v.value
-                sum[property.id] = int(sum[property.id]) + int(v.value)
+                sum[property.id] = float(sum[property.id]) + float(v.value)
         daterow[str(date)] = all_day_properties
 
     return render_template(
