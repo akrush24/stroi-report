@@ -126,7 +126,7 @@ def dynamic_route(group_id):
             Properties.query.filter_by(
                 id=request.form['del_property']).delete()
             db.session.commit()
-        if 'name' in post_values and 'desc' in post_values:
+        if 'name' in post_values and 'desc' in post_values and request.form['name'] != '':
             newline = Properties(name=request.form['name'],
                                  desc=request.form['desc'],
                                  group_id=group_id,

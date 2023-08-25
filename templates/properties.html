@@ -3,15 +3,14 @@
 {% block content %}
 <h2>{{ title }}</h2>
 
-<table class="table table-light table-hover table-bordered table-sm table-responsive-md">
+<form action="/admin/grp/{{ group_id }}" method="post">
+<table class="table table-light table-hover table-bordered table-sm table-responsive-sm table-striped">
     <thead>
-        <tr class="bg-primary">
-{% for column in table_columns %}
-{%  if column not in ['id', 'group_id'] %}
-            <th class="col-md-10">{{ column }}</th>
-{%  endif %}
-{% endfor %}
-            <th class="col-md-1"></th>
+        <tr class="table-dark">
+            <th class="col-sm-5">Название</th>
+            <th class="col-sm-4">Описание</th>
+            <th class="col-sm-1">Измерение</th>
+            <th class="col-sm-1"></th>
         </tr>
     </thead>
     <tbody>
@@ -23,58 +22,32 @@
 {%   endif %}
 {%  endfor %}
             <th>
-                <form action="/admin/grp/{{ row.group_id }}" method="post">
-                    <button type="submit" name="del_property" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
-                </form>
+                <button type="submit" name="del_property" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
             </th>
         </tr>
 {% endfor %}
+        <tr>
+            <td>
+                <input type="text" name="name" placeholder="Название" class="form-control form-control-sm" />
+            </td>
+            <td>
+                <input type="text" name="desc" placeholder="Описание" class="form-control form-control-sm" />
+            </td>
+            <td>
+                <select class="form-control form-control-sm" type="text" id="type" name="type">
+                    <option value="м²">м²</option>
+                    <option value="м³">м³</option>
+                    <option value="м">м</option>
+                    <option value="шт.">шт.</option>
+                    <option value="%">%</option>
+                </select>
+            </td>
+            <td>
+                <button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
+            </td>
+        </tr>
     </tbody>
 </table>
-
-<p class="font-weight-bold">Добавить новое свойство</p>
-
-<div class="row clearfix fixed-left">
-    <div class="col-md-12 column">
-        <form action="/admin/grp/{{ group_id }}" method="post">
-        <table class="table table-light table-hover table-bordered table-sm table-responsive-md">
-            <!-- <thead>
-                <tr>
-                    <th class="text-center">
-                        Название
-                    </th>
-                    <th class="text-center">
-                        Описание
-                    </th>
-                    <th class="text-center">
-                        Единица измерения
-                    </th>
-                </tr>
-            </thead> -->
-            <tbody>
-                <tr id='addr0'>
-                    <td class="col-md-6 column">
-                        <input type="text" name="name" placeholder='Название' class="form-control" />
-                    </td>
-                    <td class="col-md-6 column">
-                        <input type="text" name='desc' placeholder='Описание' class="form-control" />
-                    </td>
-                    <td>
-                        <select class="input-group-text" type="text" id="type" name="type">
-                            <option value="м²">м²</option>
-                            <option value="м³">м³</option>
-                            <option value="м">м</option>
-                            <option value="шт.">шт.</option>
-                            <option value="шт.">%</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr id='addr1'></tr>
-            </tbody>
-        </table>
-        <button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
-        </form>
-    </div>
-</div>
+</form>
 
 {% endblock %}

@@ -1,14 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<table class="table table-light table-hover table-bordered table-sm table-responsive-md">
+
+<form action="/admin" method="post">
+<table class="table table-light table-hover table-bordered table-sm table-responsive-sm table-striped">
     <thead>
-        <tr>
-{% for column in table_columns %}
-{%  if column != 'id' %}
-            <th scope="col">{{ column }}</th>
-{%  endif %}
-{% endfor %}
+        <tr class="table-dark">
+            <th class="col-sm-6">Название</th>
+            <th class="col-sm-5">Описание</th>
         <th></th>
     </tr>
     </thead>
@@ -29,21 +28,19 @@
             </th>
     </tr>
 {% endfor %}
+    <tr>
+        <td>
+            <input placeholder="Название объекта" class="form-control form-control-sm" type="text" id="name" name="name" required>
+        </td>
+        <td>
+            <input placeholder="Описание" class="form-control form-control-sm" type="text" id="desc" name="desc">
+        </td>
+        <td>
+            <button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
+        </td>
+    </tr>
     </tbody>
 </table>
-
-<form action="/admin" method="post">
-    <div class="input-group input-group-sm mb-3">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-sm">Название</span>
-        </div>
-        <input class="input-group-text" type="text" id="name" name="name" required>
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="inputGroup-sizing-sm">Описание</span>
-        </div>
-        <input class="input-group-text" type="text" id="desc" name="desc">
-    </div>
-    <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
 </form>
 
 {% endblock %}
