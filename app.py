@@ -59,7 +59,7 @@ with app.app_context():
 def inject_global_vars():
     return {
         'global': {
-            'title': "",
+            'title': "Система Учета ресурсов",
             'currentdate': datetime.now().date()
         }
     }

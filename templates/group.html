@@ -6,7 +6,7 @@
 <div class="table-responsive">
 <table class="table table-hover table-sm table-striped">
     <thead>
-        <tr  class="table-dark">
+        <tr class="table-dark">
             <th  class="col-md-1"></th>
 {% for property in properties %}
             <th style="white-space:nowrap;">
@@ -18,7 +18,7 @@
     <tbody>
 {% for row in valdict %}
     <tr onclick="window.location='/grp/{{ group_id }}/{{ row }}'">
-        <td style="white-space:nowrap;" class="table-dark"><small>{{ row }}</small></td> <!-- столбец с датой -->
+        <td style="white-space:nowrap;" class="table-secondary"><small>{{ row }}</small></td> <!-- столбец с датой -->
 {%  for property in properties %}
 {%   if valdict[row][property.id] %}
         <td><small class="text-muted">{{ valdict[row][property.id] }}{{ property.type }}</small></td>
