@@ -94,9 +94,12 @@ def index():
 def admin():
     if request.method == 'POST':
         post_values = list(request.form.keys())
-        if 'del_droup_id' in post_values:
-            Groups.query.filter_by(id=request.form['del_droup_id']).delete()
-            db.session.commit()
+        if 'del_group_id' in post_values:
+            if Properties.query.filter_by(group_id=request.form['del_group_id']).count() == 0:
+                Groups.query.filter_by(id=request.form['del_group_id']).delete()
+                db.session.commit()
+            else:
+                return('У группы есть свойства, сначала удалите их!')
         else:
             newline = Groups(
                 name=request.form['name'], desc=request.form['desc'])
@@ -123,9 +126,12 @@ def dynamic_route(group_id):
         post_values = list(request.form.keys())
         # return(post_values)
         if 'del_property' in post_values:
-            Properties.query.filter_by(
-                id=request.form['del_property']).delete()
-            db.session.commit()
+            if Entries.query.filter_by(property_id=request.form['del_property']).count() == 0:
+                Properties.query.filter_by(
+                    id=request.form['del_property']).delete()
+                db.session.commit()
+            else:
+                return('У свойства есть записи, удалити сначала их')
         if 'name' in post_values and 'desc' in post_values and request.form['name'] != '':
             newline = Properties(name=request.form['name'],
                                  desc=request.form['desc'],

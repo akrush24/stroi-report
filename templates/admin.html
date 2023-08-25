@@ -8,7 +8,6 @@
         <tr class="table-dark">
             <th class="col-sm-6">Название</th>
             <th class="col-sm-5">Описание</th>
-        <th></th>
     </tr>
     </thead>
     <tbody>
@@ -21,11 +20,6 @@
         </td>
 {%   endif %}
 {%  endfor %}
-            <th>
-                <form action="/admin" method="post">
-                    <button type="submit" name="del_droup_id" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
-                </form>
-            </th>
     </tr>
 {% endfor %}
     <tr>
@@ -35,12 +29,10 @@
         <td>
             <input placeholder="Описание" class="form-control form-control-sm" type="text" id="desc" name="desc">
         </td>
-        <td>
-            <button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
-        </td>
     </tr>
     </tbody>
 </table>
+<button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
 </form>
 
 {% endblock %}

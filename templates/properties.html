@@ -22,7 +22,22 @@
 {%   endif %}
 {%  endfor %}
             <th>
-                <button type="submit" name="del_property" value="{{ row.id }}" class="btn btn-sm btn-outline-danger">Удалить</button>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{ row.id }}">Удалить</button>
+                <!-- Далее идет описание модального окна -->
+                <div class="modal fade" id="exampleModal{{ row.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Вы уверены что хотите удалить: {{ row.name }}?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                                <button type="submit" value="{{ row.id }}" name="del_property" class="btn btn-primary">Да, удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </th>
         </tr>
 {% endfor %}
@@ -48,6 +63,26 @@
         </tr>
     </tbody>
 </table>
+</form>
+
+<form action="/admin" method="post">
+    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delObject">Удалить объект</button>
+    <!-- Далее идет описание модального окна для удаления объекта -->
+    <div class="modal fade" id="delObject" tabindex="-1" aria-labelledby="delObjectLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="delObjectLabel">Вы уверены что хотите удалить объект: {{ title }}?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button type="submit" value="{{ group_id }}" name="del_group_id" class="btn btn-primary">Да, удалить!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 {% endblock %}
