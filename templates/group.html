@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{% if table_columns.count() > 0 %}
+
 <table class="table table-hover table-sm">
     <thead>
-        <tr>
+        <tr  class="table-dark">
             <th  class="col-md-1"></th>
 {% for property in properties %}
             <th style="white-space:nowrap;">
@@ -15,7 +17,7 @@
     <tbody>
 {% for row in valdict %}
     <tr onclick="window.location='/grp/{{ group_id }}/{{ row }}'">
-        <th>{{ row }}</th> <!-- столбец с датой -->
+        <th style="white-space:nowrap;">{{ row }}</th> <!-- столбец с датой -->
 {%  for property in properties %}
 {%   if valdict[row][property.id] %}
         <td>{{ valdict[row][property.id] }}</td>
@@ -25,19 +27,18 @@
 {%  endfor %}
     </tr>
 {% endfor %}
-    <tr>
+    <tr class="table-dark">
         <th>
             Сумма
         </th>
 {% for property in properties %}
-        <td>0</td>
+        <th>{{ sum[property.id] }}</th>
 {% endfor %}
     </tr>
     </tbody>
 </table>
 
 <!-- Добавление новых данных -->
-{% if table_columns.count() > 0 %}
 <p class="text-success">Введите данные</p>
 <div class="row clearfix fixed-left">
     <div class="col-md-12 column">
