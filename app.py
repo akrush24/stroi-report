@@ -165,22 +165,24 @@ def group(group_id):
             db.session.commit()
         else:
             for post_value in post_values:
-                # проверяем если строчка с такой датой уже есть то игнорирует добавление новой и делаем update
-                rows = Entries.query.\
-                    filter(Entries.group_id == group_id).\
-                    filter(Entries.property_id == post_value).\
-                    filter(Entries.created_on.like(
-                        str(datetime.now().date()) + '%'))
-                if rows.count() == 0:
-                    newline = Entries(group_id=group_id,
-                                      property_id=post_value,
-                                      value=request.form[post_value],
-                                      created_on=datetime.now()
-                                      )
-                    db.session.add(newline)
-                else:
-                    rows.update(dict(value=request.form[post_value]))
-                db.session.commit()
+                if request.form[post_value] != "":
+                    currentvalue = abs(float(request.form[post_value]))
+                    # проверяем если строчка с такой датой уже есть то игнорирует добавление новой и делаем update
+                    rows = Entries.query.\
+                        filter(Entries.group_id == group_id).\
+                        filter(Entries.property_id == post_value).\
+                        filter(Entries.created_on.like(
+                            str(datetime.now().date()) + '%'))
+                    if rows.count() == 0:
+                        newline = Entries(group_id=group_id,
+                                        property_id=post_value,
+                                        value=currentvalue,
+                                        created_on=datetime.now()
+                                        )
+                        db.session.add(newline)
+                    else:
+                        rows.update(dict(value=currentvalue))
+                    db.session.commit()
 
     rows = db.session.\
         query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).\
@@ -208,7 +210,11 @@ def group(group_id):
                 date+'%')).filter(Entries.group_id == group_id).filter(Entries.property_id == property.id)
             for v in entries_by_date_by_property:
                 all_day_properties[property.id] = v.value
-                sum[property.id] = float(sum[property.id]) + float(v.value)
+                if v.value == '':
+                    correntvalue = 0
+                else:
+                    correntvalue = v.value
+                sum[property.id] = float(sum[property.id]) + float(correntvalue)
         daterow[str(date)] = all_day_properties
 
     return render_template(
