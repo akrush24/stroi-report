@@ -10,7 +10,7 @@
             <th  class="col-md-1"></th>
 {% for property in properties %}
             <th style="white-space:nowrap;">
-                {{ property['name'] }}
+                <small>{{ property['name'] }}</small>
             </th>
 {% endfor %}
         </tr>
@@ -30,10 +30,10 @@
 {% endfor %}
     <tr class="table-dark">
         <th>
-            Сумма
+            <small>Сумма</small>
         </th>
 {% for property in properties %}
-        <th>{{ sum[property.id] }}{{ property.type }}</th>
+        <th><small>{{ sum[property.id] }}{{ property.type }}</small></th>
 {% endfor %}
     </tr>
     </tbody>
