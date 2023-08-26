@@ -42,31 +42,29 @@
 
 <!-- Добавление новых данных -->
 <p class="text-success">Введите данные</p>
-<div class="row clearfix fixed-left">
-    <div class="col-md-12 column">
-    <form action="/grp/{{ group_id }}" method="post" class="col-md-12">
-        <table class="table table-bordered table-hover">
-            <tbody>
+<form action="/grp/{{ group_id }}" method="post" class="col-sm-12">
+    <table class="table table-light table-hover table-bordered table-sm table-responsive-sm">
+        <tbody>
 {% for column in table_columns %}
 {%  if column not in ['id', 'created_on', 'updated_on'] %}
         <tr>
-            <td class="col-md-1 column">
-                <span class="input-group-text">{{ column.name }}</span>
+            <td class="col-sm-1" style="white-space:nowrap;">
+                <b>{{ column.name }}</b>
             </td>
-            <td class="col-md-11 column">
-                <input placeholder="{{ column.name }}" class="col-md-12 form-control text-sm-left" type="number" step="0.01" id="{{ column.id }}" name="{{ column.id }}">
-                <td class="column">
-                    <span class="input-group-text">{{ column.type }}</span>
-                </td>
+            <td class="col-sm-11">
+                <input placeholder="{{ column.name }}" class="form-control form-control-sm text-sm-left" type="number" step="0.01" id="{{ column.id }}" name="{{ column.id }}">
+            </td>
+            <td>
+                {{ column.type }}
             </td>
         </tr>
 {%  endif %}
 {% endfor %}
-            </tbody></table>
-        <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
-    </form>
-    </div>
-</div>
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-sm btn-primary">Добавить</button>
+</form>
+
 {% else %}
 
 <b>У объекта нет доступных свойств</b>

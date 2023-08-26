@@ -18,7 +18,9 @@
         <tr>
 {%  for column in table_columns %}
 {%   if column not in ['id', 'group_id'] %}
-            <td>{{ row[column] }}</td>
+            <td>
+                <input type="text" name="{{ row[id] }}" value="{{ row[column] }}" class="form-control form-control-sm" />
+            </td>
 {%   endif %}
 {%  endfor %}
             <th>
@@ -58,7 +60,7 @@
                 </select>
             </td>
             <td>
-                <button type="submit" class="btn btn-sm btn-primary btn-sm">Сохранить</button>
+                <button type="submit" class="btn btn-sm btn-primary btn-sm">Добавить</button>
             </td>
         </tr>
     </tbody>

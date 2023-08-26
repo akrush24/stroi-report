@@ -64,8 +64,6 @@ def inject_global_vars():
         }
     }
 
-# app name
-
 
 @app.errorhandler(404)
 # перехватываем 404 ошибку
