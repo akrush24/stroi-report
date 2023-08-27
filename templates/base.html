@@ -36,14 +36,18 @@
         </div>
     </div>
 </nav>
-
+<!-- список групп -->
 <nav class="navbar navbar-expand-md">
     <div class="container-fluid">
         <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
             <ul class="navbar-nav me-auto">
 {% for group in groups %}
-                <li class="nav-item active" style="margin-right: 5px"></li>
+                <li class="nav-item active" style="margin-right: 2px"></li>
+                    {% if group_id == group.id %}
                     <a class="btn btn-danger btn-sm" style="white-space:nowrap;" href="/grp/{{ group.id }}">{{ group.name }}</a>
+                    {% else %}
+                    <a class="btn btn-secondary btn-sm" style="white-space:nowrap;" href="/grp/{{ group.id }}">{{ group.name }}</a>
+                    {% endif %}
                 </li>
 {% endfor %}
             </ul>
