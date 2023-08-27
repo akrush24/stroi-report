@@ -3,9 +3,7 @@
 
 from flask import Flask, render_template, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime
-import uuid
 from sqlalchemy.orm import relationship
 import os
 
@@ -14,13 +12,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 db = SQLAlchemy(app)
 
 # Создание модели таблицы
-
-
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), nullable=False)
     desc = db.Column(db.String(100), nullable=False)
+
 
 class Groups(db.Model):
     __tablename__ = 'groups'
@@ -40,9 +37,7 @@ class Properties(db.Model):
 
 class Entries(db.Model):
     __tablename__ = 'entries'
-    id = db.Column('id', db.Text(length=36), default=lambda: str(
-        uuid.uuid4()), primary_key=True)
-    # id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
     property_id = db.Column(db.Integer, db.ForeignKey('properties.id'))
     value = db.Column(db.String(50), nullable=False)
@@ -51,10 +46,12 @@ class Entries(db.Model):
         db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
+# инициализация DB
 with app.app_context():
     db.create_all()
 
 
+# задаем глобальные переменные
 @app.context_processor
 def inject_global_vars():
     return {
