@@ -2,14 +2,15 @@
 # coding: utf-8
 
 from flask import Flask, render_template, request, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from sqlalchemy.orm import relationship
+from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
 db = SQLAlchemy(app)
+
 
 # Создание модели таблицы
 class User(db.Model):
@@ -45,7 +46,6 @@ class Entries(db.Model):
     updated_on = db.Column(
         db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-
 # инициализация DB
 with app.app_context():
     db.create_all()
@@ -71,7 +71,7 @@ def not_found(e):
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'images'),
-                               'favicon.png', mimetype='image/vnd.microsoft.icon')
+                            'favicon.png', mimetype='image/vnd.microsoft.icon')
 
 
 # Перенести все операции с базой данных внутрь функции или маршрута Flask
@@ -80,11 +80,8 @@ def index():
     return render_template('base.html', groups=Groups.query.all())
 
 
-'''
-    Админка
-'''
 
-
+# Админка
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     if request.method == 'POST':
@@ -105,16 +102,14 @@ def admin():
     rows = Groups.query.all()
 
     return render_template('admin.html',
-                           table_columns=table_columns,
-                           rows=rows,
-                           groups=rows)
+                        table_columns=table_columns,
+                        rows=rows,
+                        groups=rows)
 
 
 '''
     Редактирование групп и свойств
 '''
-
-
 @app.route('/admin/grp/<int:group_id>', methods=['GET', 'POST'])
 def dynamic_route(group_id):
     if request.method == 'POST':
@@ -129,9 +124,9 @@ def dynamic_route(group_id):
                 return('У свойства есть записи, удалити сначала их')
         if 'name' in post_values and 'desc' in post_values and request.form['name'] != '':
             newline = Properties(name=request.form['name'],
-                                 desc=request.form['desc'],
-                                 group_id=group_id,
-                                 type=request.form['type'])
+                                desc=request.form['desc'],
+                                group_id=group_id,
+                                type=request.form['type'])
             db.session.add(newline)
             db.session.commit()
     rows = Properties.query.filter_by(group_id=group_id)
@@ -148,14 +143,9 @@ def dynamic_route(group_id):
     )
 
 
-'''
-    заносим новые записи по выбранной группе
-'''
 
-
+# Просмотр группы
 @app.route('/grp/<int:group_id>', methods=['GET', 'POST'])
-# @app.route('/grp/<int:group_id>', defaults={'filter_date': None}, methods=['GET', 'POST'])
-# @app.route('/grp/<int:group_id>/<string:filter_date>', methods=['GET', 'POST'])
 def group(group_id):
     table_columns = Properties.query.filter_by(group_id=group_id)
 
@@ -264,3 +254,4 @@ def dateview(group_id, filter_date):
 
 if __name__ == '__main__':
     app.run(debug=True)
+    # app.run()
