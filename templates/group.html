@@ -40,6 +40,9 @@
 </table>
 </div>
 
+{% for month in months %}
+{{ month.year }}.{{ month.month }}
+{% endfor %}
 <!-- Добавление новых данных -->
 <p class="text-success">Введите данные</p>
 <form action="/grp/{{ group_id }}" method="post" class="col-sm-12">

@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, send_from_directory
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 import os
 
 app = Flask(__name__)
@@ -197,8 +198,10 @@ def group(group_id):
             except:
                 sum[property.id] = 0
             # цикл по всем свойствам на которым есть записи на конкретную дату
-            entries_by_date_by_property = db.session.query(Entries.value).filter(Entries.created_on.like(
-                date+'%')).filter(Entries.group_id == group_id).filter(Entries.property_id == property.id)
+            entries_by_date_by_property = db.session.query(Entries.value).\
+                filter(Entries.created_on.like(date+'%')).\
+                filter(Entries.group_id == group_id).\
+                filter(Entries.property_id == property.id)
             for v in entries_by_date_by_property:
                 all_day_properties[property.id] = v.value
                 if v.value == '':
@@ -207,7 +210,12 @@ def group(group_id):
                     correntvalue = v.value
                 sum[property.id] = float(sum[property.id]) + float(correntvalue)
         daterow[str(date)] = all_day_properties
-
+    # select strftime('%m', created_on) as date from entries group by date;
+    # делаем выборку по год-месяц
+    months = db.session.query(
+        func.extract('year', Entries.created_on).label('year'),
+        func.extract('month', Entries.created_on).label('month')
+    ).filter(Entries.group_id == group_id).order_by('year', 'month').group_by('year', 'month').all()
     return render_template(
         'group.html',
         data=rows,
@@ -217,7 +225,8 @@ def group(group_id):
         group_id=group_id,
         entries=rows,
         valdict=daterow,
-        sum=sum)
+        sum=sum,
+        months=months)
 
 
 # записи по выбранной дате
