@@ -45,7 +45,7 @@
     <a class="nav-link active" aria-current="page" style="white-space:nowrap;" href="{% if 'admin' in request.url %}/admin/grp/{{ group.id }}{% else %}/grp/{{ group.id }}{% endif %}/{{ global.currentyear }}-{{ global.currentmonth }}">{{ group.name
         }}</a>
 {%   else %}
-    <a class="nav-link" style="white-space:nowrap;" href="{% if 'admin' in request.url %}/admin/grp/{{ group.id }}{% else %}/grp/{{ group.id }}{% endif %}/2023-9">{{ group.name }}</a>
+    <a class="nav-link" style="white-space:nowrap;" href="{% if 'admin' in request.url %}/admin/grp/{{ group.id }}{% else %}/grp/{{ group.id }}/2023-9{% endif %}">{{ group.name }}</a>
 {%   endif %}
     </li>
 {% endfor %}
