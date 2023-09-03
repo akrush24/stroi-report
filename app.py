@@ -146,8 +146,9 @@ def dynamic_route(group_id):
 
 
 # Просмотр группы
-@app.route('/grp/<int:group_id>', methods=['GET', 'POST'])
-def group(group_id):
+@app.route('/grp/<int:group_id>/<string:filter_month>', methods=['GET', 'POST'])
+@app.route('/grp/<int:group_id>', defaults={'filter_month': ''}, methods=['GET', 'POST'])
+def group(group_id, filter_month):
     table_columns = Properties.query.filter_by(group_id=group_id)
 
     if request.method == 'POST':
@@ -175,15 +176,17 @@ def group(group_id):
                     else:
                         rows.update(dict(value=currentvalue))
                     db.session.commit()
+                
 
-    rows = db.session.\
-        query(Entries.id, Properties.name, Entries.value, Entries.created_on, Properties.type).\
-        filter(Entries.property_id == Properties.id).\
-        filter(Entries.group_id == group_id)
     entries_by_date = db.session.query(
         db.func.date(
             Entries.created_on).label('DATE'),
         db.func.count('*')).filter(Entries.group_id == group_id).group_by(db.func.date(Entries.created_on))
+
+    # если есть параметр фильтрации по месяцу то выбираем все записи по выбранному месяцу и году
+    if filter_month:
+        filter_month_datatime = datetime.strptime(filter_month, "%Y-%m")
+        entries_by_date = entries_by_date.filter(func.extract('year', Entries.created_on)==filter_month_datatime.year).filter(func.extract('month', Entries.created_on)==filter_month_datatime.month)
     tabs = [row[0] for row in entries_by_date.all()]
     properties_by_group = Properties.query.filter(
         Properties.group_id == group_id).all()
@@ -218,19 +221,20 @@ def group(group_id):
     ).filter(Entries.group_id == group_id).order_by('year', 'month').group_by('year', 'month').all()
     return render_template(
         'group.html',
-        data=rows,
+        # data=entries,
         table_columns=table_columns,
         groups=Groups.query.all(),
         properties=properties_by_group,
         group_id=group_id,
-        entries=rows,
+        # entries=entries,
         valdict=daterow,
         sum=sum,
-        months=months)
+        months=months,
+        filter_month=filter_month)
 
 
 # записи по выбранной дате
-@app.route('/grp/<int:group_id>/<string:filter_date>', methods=['GET', 'POST'])
+@app.route('/grp/<int:group_id>/v/<string:filter_date>', methods=['GET', 'POST'])
 def dateview(group_id, filter_date):
     if request.method == 'POST':
         post_values = list(request.form.keys())

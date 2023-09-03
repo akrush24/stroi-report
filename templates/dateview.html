@@ -20,7 +20,7 @@
             <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
             <td class="col-md-1">
 {%  if filter_date %}
-                <form action="/grp/{{ group_id }}/{{ filter_date }}" method="post">
+                <form action="/grp/{{ group_id }}/v/{{ filter_date }}" method="post">
 {%  else %}
                 <form action="/grp/{{ group_id }}" method="post">
 {%  endif %}
@@ -36,7 +36,7 @@
 <nav class="navbar">
     <div>
 {% for tab in tabs %}
-        <a class="btn btn-outline-success btn-sm" href="/grp/{{ group_id }}/{{ tab }}">{{ tab }}</a>
+        <a class="btn {% if tab == filter_date %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" href="/grp/{{ group_id }}/v/{{ tab }}">{{ tab }}</a>
 {% endfor %}
     </div>
 </nav>

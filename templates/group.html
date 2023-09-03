@@ -17,7 +17,7 @@
     </thead>
     <tbody>
 {% for row in valdict %}
-    <tr onclick="window.location='/grp/{{ group_id }}/{{ row }}'">
+    <tr onclick="window.location='/grp/{{ group_id }}/v/{{ row }}'">
         <td style="white-space:nowrap;" class="table-secondary"><small>{{ row }}</small></td> <!-- столбец с датой -->
 {%  for property in properties %}
 {%   if valdict[row][property.id] %}
@@ -41,9 +41,10 @@
 </div>
 
 {% for month in months %}
-{{ month.year }}.{{ month.month }}
+<a class="btn {% if month.year|string+'-'+month.month|string == filter_month %}btn-success{% else %}btn-outline-success{% endif %} btn-sm" href="/grp/{{ group_id }}/{{ month.year }}-{{ month.month }}">{{ month.year }}-{{ month.month }}</a>
 {% endfor %}
 <!-- Добавление новых данных -->
+<hr class="hr" />
 <p class="text-success">Введите данные</p>
 <form action="/grp/{{ group_id }}" method="post" class="col-sm-12">
     <table class="table table-light table-hover table-bordered table-sm table-responsive-sm">
