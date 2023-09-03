@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ex
 if [[ $1 == '-u' ]]; then
-	uwsgi -H ./venv --ini uwsgi.ini --daemonize uwsgi.log
+	uwsgi -H ./venv --ini uwsgi.ini --daemonize uwsgi.log --pidfile uwsgi.pid
 else
 	python3 ./app.py
 fi
