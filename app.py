@@ -47,6 +47,7 @@ class Entries(db.Model):
     updated_on = db.Column(
         db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
+
 # инициализация DB
 with app.app_context():
     db.create_all()
@@ -58,7 +59,9 @@ def inject_global_vars():
     return {
         'global': {
             'title': "Система учета ресурсов",
-            'currentdate': datetime.now().date()
+            'currentdate': datetime.now().date(),
+            'currentmonth': datetime.now().date().month,
+            'currentyear': datetime.now().date().year
         }
     }
 
@@ -185,7 +188,12 @@ def group(group_id, filter_month):
 
     # если есть параметр фильтрации по месяцу то выбираем все записи по выбранному месяцу и году
     if filter_month:
-        filter_month_datatime = datetime.strptime(filter_month, "%Y-%m")
+        try:
+            filter_month_datatime = datetime.strptime(filter_month, "%Y-%m")
+        except:
+            filter_month = str(datetime.now().date().year)+'-'+str(datetime.now().date().month)
+            filter_month_datatime = datetime.strptime(str(datetime.now().date().year)+
+                                                    '-'+str(datetime.now().date().month), "%Y-%m")
         entries_by_date = entries_by_date.filter(func.extract('year', Entries.created_on)==filter_month_datatime.year).filter(func.extract('month', Entries.created_on)==filter_month_datatime.month)
     tabs = [row[0] for row in entries_by_date.all()]
     properties_by_group = Properties.query.filter(
