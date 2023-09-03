@@ -45,7 +45,7 @@
 {% endfor %}
 <!-- Добавление новых данных -->
 <hr class="hr" />
-<form action="/grp/{{ group_id }}" method="post" class="col-sm-12">
+<form action="/grp/{{ group_id }}/{{ global.currentyear }}-{{ global.currentmonth }}" method="post" class="col-sm-12">
     <table class="table table-light table-hover table-bordered table-sm table-responsive-sm">
         <tbody>
 {% for column in table_columns %}
