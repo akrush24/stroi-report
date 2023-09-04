@@ -15,10 +15,10 @@
     <tbody>
 {% for row in entries %}
         <tr>
-            <td class="col-md-9">{{ row['name'] }}</td>
-            <td class="col-md-1">{{ row['value'] }}{{ row['type'] }}</td>
-            <td class="col-md-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
-            <td class="col-md-1">
+            <td class="col-sm-9">{{ row['name'] }}</td>
+            <td class="col-sm-1">{{ row['value'] }}{{ row['type'] }}</td>
+            <td class="col-sm-1">{{ row['created_on'].strftime('%Y-%m-%d') }}</td>
+            <td class="col-sm-1">
 {%  if filter_date %}
                 <form action="/grp/{{ group_id }}/v/{{ filter_date }}" method="post">
 {%  else %}
